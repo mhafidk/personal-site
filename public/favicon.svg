@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <rect x="4" y="4" width="120" height="120" rx="24" fill="#0a0c10" stroke="#222938" stroke-width="6" />
+  <path d="M18 32V18H32" stroke="#6cb6ff" stroke-width="4" stroke-linecap="square" />
+  <path d="M110 96V110H96" stroke="#6cb6ff" stroke-width="4" stroke-linecap="square" />
+  <text
+    x="64"
+    y="77"
+    text-anchor="middle"
+    fill="#eceff4"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    font-size="40"
+    font-weight="700"
+    letter-spacing="-1.5"
+  >MHK</text>
+</svg>

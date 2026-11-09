@@ -1,0 +1,249 @@
+---
+---
+
+<dialog
+  id="search-dialog"
+  closedby="any"
+  aria-labelledby="search-dialog-title"
+  class="m-auto w-[min(92vw,42rem)] rounded-lg border border-[#252c3a] bg-[#10141b] p-0 text-[#eceff4] shadow-[0_24px_64px_rgba(0,0,0,0.75)]"
+>
+  <div class="border-b border-[#1e2430] px-4 py-3.5">
+    <label for="search-input" id="search-dialog-title" class="sr-only">
+      Search articles, projects, and experience
+    </label>
+    <div class="flex items-center gap-3">
+      <svg
+        class="h-4 w-4 shrink-0 text-[#6e7a8f]"
+         viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+      <input
+        id="search-input"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Search articles, system design, principles, or experience..."
+        class="w-full bg-transparent text-sm text-[#eceff4] placeholder-[#6e7a8f] focus:outline-none"
+      />
+      <button
+        type="button"
+        id="search-close-btn"
+        class="rounded border border-[#252c3a] bg-[#161b24] px-2 py-0.5 font-mono text-[11px] text-[#9aa5b8] transition hover:border-[#384357] hover:text-[#eceff4]"
+        aria-label="Close search dialog"
+      >
+        ESC
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="search-results"
+    role="listbox"
+    aria-label="Search results"
+    class="max-h-[62vh] overflow-y-scroll divide-y divide-[#1a202c] p-2"
+  >
+    <div class="px-3 py-8 text-center text-sm text-[#9aa5b8]">
+      Loading index...
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between border-t border-[#1e2430] bg-[#0c0f15] px-4 py-2 text-xs text-[#6e7a8f]">
+    <div class="flex items-center gap-3">
+      <span><kbd class="font-mono text-[#9aa5b8]">↑↓</kbd> navigate</span>
+      <span><kbd class="font-mono text-[#9aa5b8]">↵</kbd> open</span>
+      <span><kbd class="font-mono text-[#9aa5b8]">esc</kbd> dismiss</span>
+    </div>
+    <span id="search-count" class="font-mono tabular-nums"></span>
+  </div>
+</dialog>
+
+<script>
+  interface SearchEntry {
+    type: 'Article' | 'Project' | 'Experience';
+    title: string;
+    description: string;
+    url: string;
+    date: string;
+    tags: string[];
+    body: string;
+  }
+
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const resultsContainer = document.getElementById('search-results');
+  const countEl = document.getElementById('search-count');
+  const closeBtn = document.getElementById('search-close-btn');
+
+  let indexCache: SearchEntry[] | null = null;
+  let activeIndex = 0;
+  let currentMatches: SearchEntry[] = [];
+
+  async function ensureIndex(): Promise<SearchEntry[]> {
+    if (indexCache) return indexCache;
+    try {
+      const res = await fetch('/search-index.json');
+      indexCache = await res.json();
+      return indexCache ?? [];
+    } catch {
+      return [];
+    }
+  }
+
+  function escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderResults(entries: SearchEntry[], query: string) {
+    if (!resultsContainer || !countEl) return;
+    currentMatches = entries;
+    activeIndex = 0;
+    countEl.textContent = `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`;
+
+    if (entries.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="px-4 py-10 text-center">
+          <p class="text-sm text-[#eceff4]">No matching entries for "${escapeHtml(query)}"</p>
+          <p class="mt-1 text-xs text-[#9aa5b8]">Try searching by topic (e.g. system design, KISS, DRY, YAGNI, Qontak).</p>
+        </div>
+      `;
+      return;
+    }
+
+    resultsContainer.innerHTML = entries
+      .map((item, idx) => {
+        const isSelected = idx === activeIndex;
+        const tagsHtml = item.tags
+          .slice(0, 4)
+          .map(
+            (t) =>
+              `<span class="rounded bg-[#161b24] px-1.5 py-0.5 font-mono text-[11px] text-[#9aa5b8] border border-[#222938]">${escapeHtml(t)}</span>`
+          )
+          .join('');
+
+        return `
+          <a
+            href="${escapeHtml(item.url)}"
+            role="option"
+            aria-selected="${isSelected}"
+            data-result-index="${idx}"
+            class="search-result-item block rounded-md px-3.5 py-3 transition ${
+              isSelected ? 'bg-[#18202c]' : 'hover:bg-[#141a24]'
+            }"
+          >
+            <div class="flex items-baseline justify-between gap-3">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="font-mono text-[11px] text-[#6cb6ff] shrink-0">${escapeHtml(item.type)}</span>
+                <span class="font-medium text-sm text-[#eceff4] truncate">${escapeHtml(item.title)}</span>
+              </div>
+              <span class="font-mono text-xs text-[#9aa5b8] tabular-nums shrink-0">${escapeHtml(item.date)}</span>
+            </div>
+            <p class="mt-1 text-xs text-[#9aa5b8] line-clamp-2 leading-relaxed">${escapeHtml(item.description)}</p>
+            <div class="mt-2 flex flex-wrap gap-1.5">${tagsHtml}</div>
+          </a>
+        `;
+      })
+      .join('');
+  }
+
+  function updateActiveHighlight() {
+    if (!resultsContainer) return;
+    const links = resultsContainer.querySelectorAll<HTMLAnchorElement>('.search-result-item');
+    links.forEach((link, idx) => {
+      const selected = idx === activeIndex;
+      link.setAttribute('aria-selected', String(selected));
+      link.classList.toggle('bg-[#18202c]', selected);
+      if (selected) {
+        link.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  }
+
+  async function runSearch(rawQuery: string) {
+    const all = await ensureIndex();
+    const q = rawQuery.trim().toLowerCase();
+    if (!q) {
+      renderResults(all, '');
+      return;
+    }
+    const terms = q.split(/\s+/).filter(Boolean);
+    const matched = all.filter((entry) => {
+      const haystack = `${entry.title} ${entry.description} ${entry.tags.join(' ')} ${entry.body} ${entry.type}`.toLowerCase();
+      return terms.every((t) => haystack.includes(t));
+    });
+    renderResults(matched, rawQuery);
+  }
+
+  async function openSearchModal(initialQuery = '') {
+    if (!dialog || !input) return;
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+    input.value = initialQuery;
+    input.focus();
+    await runSearch(initialQuery);
+  }
+
+  document.querySelectorAll('[data-open-search]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      openSearchModal();
+    });
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    dialog?.close();
+  });
+
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) {
+      dialog.close();
+    }
+  });
+
+  input?.addEventListener('input', () => {
+    runSearch(input.value);
+  });
+
+  input?.addEventListener('keydown', (e) => {
+    if (currentMatches.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = (activeIndex + 1) % currentMatches.length;
+      updateActiveHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = (activeIndex - 1 + currentMatches.length) % currentMatches.length;
+      updateActiveHighlight();
+    } else if (e.key === 'Enter') {
+      const target = currentMatches[activeIndex];
+      if (target) {
+        e.preventDefault();
+        dialog?.close();
+        window.location.href = target.url;
+      }
+    }
+  });
+
+  window.addEventListener('keydown', (e) => {
+    const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k';
+    const isSlash =
+      e.key === '/' &&
+      !dialog?.open &&
+      !['INPUT', 'TEXTAREA'].includes((document.activeElement as HTMLElement)?.tagName || '');
+    if (isCmdK || isSlash) {
+      e.preventDefault();
+      openSearchModal();
+    }
+  });
+</script>

@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { SITE } from "../../data/site";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const allTags = Array.from(
+    new Set(posts.flatMap((post) => post.data.tags)),
+).sort();
+---
+
+<BaseLayout
+    title={`Technical Writing · ${SITE.name}`}
+    description="Articles and notes on software engineering, system design, backend architecture, and programming principles."
+>
+    <section class="pb-10 border-b border-[#1a202c]">
+        <h1 class="text-3xl font-semibold tracking-tight text-[#eceff4]">
+            Technical Writing
+        </h1>
+
+        <div
+            class="mt-6 flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Filter articles by tag"
+        >
+            <button
+                type="button"
+                data-tag-filter="all"
+                aria-pressed="true"
+                class="tag-filter-btn rounded border border-[#6cb6ff] bg-[#162030] px-2.5 py-1 font-mono text-xs text-[#eceff4] transition"
+            >
+                All ({posts.length})
+            </button>
+            {allTags.map((tag) => (
+                <button
+                    type="button"
+                    data-tag-filter={tag}
+                    aria-pressed="false"
+                    class="tag-filter-btn rounded border border-[#222938] bg-[#10141b] px-2.5 py-1 font-mono text-xs text-[#9aa5b8] transition hover:border-[#343f54] hover:text-[#eceff4]"
+                >
+                    #{tag}
+                </button>
+            ))}
+        </div>
+    </section>
+
+    <section class="divide-y divide-[#1a202c]" id="blog-post-list">
+        {posts.map((post) => (
+            <PostCard post={post} headingLevel="h2" />
+        ))}
+    </section>
+</BaseLayout>
+
+<script>
+    const buttons =
+        document.querySelectorAll<HTMLButtonElement>(".tag-filter-btn");
+    const rows = document.querySelectorAll<HTMLElement>(".blog-post-row");
+
+    buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const selectedTag = btn.getAttribute("data-tag-filter") || "all";
+
+            buttons.forEach((b) => {
+                const active = b === btn;
+                b.setAttribute("aria-pressed", String(active));
+                b.classList.toggle("border-[#6cb6ff]", active);
+                b.classList.toggle("bg-[#162030]", active);
+                b.classList.toggle("text-[#eceff4]", active);
+                b.classList.toggle("border-[#222938]", !active);
+                b.classList.toggle("bg-[#10141b]", !active);
+                b.classList.toggle("text-[#9aa5b8]", !active);
+            });
+
+            rows.forEach((row) => {
+                const tags = (row.getAttribute("data-tags") || "").split(",");
+                const show =
+                    selectedTag === "all" || tags.includes(selectedTag);
+                row.style.display = show ? "" : "none";
+            });
+        });
+    });
+</script>

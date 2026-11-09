@@ -1,0 +1,316 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { SITE, EXPERIENCE, PROJECTS } from "../data/site";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const recentPosts = allPosts
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 4);
+---
+
+<BaseLayout fullViewport={true}>
+    <!-- Full-Width & Full-Height Centered Hero View -->
+    <section class="relative flex min-h-[calc(100dvh-3.85rem)] w-full flex-col items-center justify-center overflow-hidden border-b border-[#1a202c] px-5 text-center sm:px-8">
+        <!-- Sparse Fiducial Crosshairs (+) & Sub-Grid Calibration Dots -->
+        <svg
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 h-full w-full mask-[radial-gradient(ellipse_85%_80%_at_50%_50%,#000_45%,transparent_95%)]"
+        >
+            <defs>
+                <pattern
+                    id="fiducial-crosshairs"
+                    width="120"
+                    height="120"
+                    patternUnits="userSpaceOnUse"
+                >
+                    <!-- Primary fiducial crosshair (+) at (60, 60) -->
+                    <path
+                        d="M 55.5 60 H 64.5 M 60 55.5 V 64.5"
+                        fill="none"
+                        stroke="#94a3b8"
+                        stroke-opacity="0.32"
+                        stroke-width="1"
+                        stroke-linecap="square"
+                    />
+                    <!-- Subtle hair-thin guide ticks along axes -->
+                    <path
+                        d="M 0 60 H 120 M 60 0 V 120"
+                        fill="none"
+                        stroke="#64748b"
+                        stroke-opacity="0.05"
+                        stroke-width="1"
+                    />
+                    <!-- Micro calibration dot at cell origin -->
+                    <circle
+                        cx="0"
+                        cy="0"
+                        r="1"
+                        fill="#64748b"
+                        fill-opacity="0.22"
+                    />
+                    <circle
+                        cx="120"
+                        cy="0"
+                        r="1"
+                        fill="#64748b"
+                        fill-opacity="0.22"
+                    />
+                    <circle
+                        cx="0"
+                        cy="120"
+                        r="1"
+                        fill="#64748b"
+                        fill-opacity="0.22"
+                    />
+                    <circle
+                        cx="120"
+                        cy="120"
+                        r="1"
+                        fill="#64748b"
+                        fill-opacity="0.22"
+                    />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#fiducial-crosshairs)" />
+        </svg>
+
+        <!-- Framed Hero Centerpiece with Corner Registration Marks -->
+        <div class="relative z-10 flex max-w-2xl flex-col items-center px-6 py-10 sm:px-12 sm:py-12">
+            <!-- Top-Left & Top-Right Registration Brackets -->
+            <span
+                aria-hidden="true"
+                class="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l border-[#475569]/70"
+            ></span>
+            <span
+                aria-hidden="true"
+                class="pointer-events-none absolute top-0 right-0 h-3 w-3 border-t border-r border-[#475569]/70"
+            ></span>
+            <!-- Bottom-Left & Bottom-Right Registration Brackets -->
+            <span
+                aria-hidden="true"
+                class="pointer-events-none absolute bottom-0 left-0 h-3 w-3 border-b border-l border-[#475569]/70"
+            ></span>
+            <span
+                aria-hidden="true"
+                class="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r border-[#475569]/70"
+            ></span>
+
+            <h1 class="text-4xl font-semibold tracking-tight text-[#eceff4] sm:text-5xl">
+                <span class="block leading-tight">
+                    Muhammad <br class="sm:hidden" />Hafid K
+                </span>
+                <span class="mt-2.5 block text-xl font-normal tracking-normal text-[#9aa5b8] sm:text-2xl">
+                    {SITE.role}
+                </span>
+            </h1>
+
+            <p class="mt-5 max-w-[56ch] text-base leading-relaxed text-[#9aa5b8] sm:text-lg">
+                I build reliable software, scalable backend systems, and
+                high-performance architectures. Here I share my engineering
+                experience and technical blog posts.
+            </p>
+
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-3.5 text-xs">
+                <a
+                    href="/blog"
+                    class="rounded-md bg-[#eceff4] px-4 py-2.5 font-medium text-[#0a0c10] transition hover:bg-white"
+                >
+                    Read Technical Blog
+                </a>
+                {/* Portfolio hidden for now
+                <a
+                    href="#projects"
+                    class="rounded-md border border-[#252c3a] bg-[#10141b] px-4 py-2.5 font-medium text-[#eceff4] transition hover:border-[#384357] hover:bg-[#161b24]"
+                >
+                    View Portfolio
+                </a>
+                */}
+                <a
+                    href="#experience"
+                    class="rounded-md border border-[#252c3a] bg-[#10141b] px-4 py-2.5 font-medium text-[#eceff4] transition hover:border-[#384357] hover:bg-[#161b24]"
+                >
+                    Experience
+                </a>
+                <button
+                    type="button"
+                    data-open-search
+                    class="rounded-md border border-[#222938] bg-[#0d1017] px-4 py-2.5 font-mono text-[#9aa5b8] transition hover:border-[#343f54] hover:text-[#eceff4]"
+                >
+                    Search (⌘K)
+                </button>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center gap-5 font-mono text-xs text-[#9aa5b8]">
+                {SITE.socials.map((item, idx) => (
+                    <>
+                        {idx > 0 && <span class="text-[#2d3648]">·</span>}
+                        <a
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="transition-colors hover:text-[#6cb6ff]"
+                        >
+                            {item.label} &nearr;
+                        </a>
+                    </>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- Below the Fold Content (Scroll Down) -->
+    <div class="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-20">
+        <!-- Technical Writing -->
+        <section id="writing" class="pb-16 border-b border-[#1a202c]">
+            <div class="flex items-baseline justify-between gap-4">
+                <h2 class="text-2xl font-semibold tracking-tight text-[#eceff4]">
+                    Recent Technical Writing
+                </h2>
+                <a
+                    href="/blog"
+                    class="font-mono text-xs text-[#6cb6ff] transition hover:text-[#96cbff]"
+                >
+                    All articles ({allPosts.length}) &rarr;
+                </a>
+            </div>
+
+            <div class="mt-6 divide-y divide-[#1a202c] border-y border-[#1a202c]">
+                {recentPosts.map((post) => (
+                    <PostCard post={post} headingLevel="h3" compact={true} />
+                ))}
+            </div>
+        </section>
+
+        <!-- Selected Portfolio Projects (Hidden for now) -->
+        <section id="projects" class="hidden py-16 border-b border-[#1a202c]">
+            <div class="flex items-baseline justify-between gap-4">
+                <h2 class="text-2xl font-semibold tracking-tight text-[#eceff4]">
+                    Selected Portfolio
+                </h2>
+                <a
+                    href="/projects"
+                    class="font-mono text-xs text-[#6cb6ff] transition hover:text-[#96cbff]"
+                >
+                    Full portfolio &rarr;
+                </a>
+            </div>
+
+            <div class="mt-6 divide-y divide-[#1a202c] border-y border-[#1a202c]">
+                {PROJECTS.map((project) => (
+                    <div class="py-6">
+                        <div class="flex flex-wrap items-baseline justify-between gap-2">
+                            <div class="flex items-baseline gap-3">
+                                <h3 class="text-base font-semibold text-[#eceff4]">
+                                    {project.title}
+                                </h3>
+                                <span class="font-mono text-xs text-[#9aa5b8] tabular-nums">
+                                    {project.year}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 font-mono text-xs">
+                                {project.liveUrl && (
+                                    <a
+                                        href={project.liveUrl}
+                                        class="text-[#6cb6ff] transition hover:text-[#96cbff]"
+                                    >
+                                        Case Study &rarr;
+                                    </a>
+                                )}
+                                {project.repoUrl && (
+                                    <a
+                                        href={project.repoUrl}
+                                        class="text-[#9aa5b8] transition hover:text-[#eceff4]"
+                                    >
+                                        Source
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+
+                        <p class="mt-2 max-w-[68ch] text-sm leading-relaxed text-[#d5dce6]">
+                            {project.summary}
+                        </p>
+                        <p class="mt-1.5 max-w-[68ch] text-xs leading-relaxed text-[#9aa5b8]">
+                            <span class="font-medium text-[#eceff4]">
+                                Benchmark / Outcome:
+                            </span>{" "}
+                            {project.outcome}
+                        </p>
+
+                        <div class="mt-3.5 flex flex-wrap gap-1.5">
+                            {project.stack.map((tech) => (
+                                <span class="rounded border border-[#222938] bg-[#10141b] px-2 py-0.5 font-mono text-[11px] text-[#9aa5b8]">
+                                    {tech}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <!-- Experience -->
+        <section id="experience" class="pt-16">
+            <h2 class="text-2xl font-semibold tracking-tight text-[#eceff4]">
+                Experiences
+            </h2>
+
+            <div class="mt-6 space-y-10">
+                {EXPERIENCE.map((item) => (
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-[11rem_1fr] sm:gap-8">
+                        <div class="font-mono text-xs text-[#9aa5b8] tabular-nums sm:pt-1">
+                            <div>{item.period}</div>
+                            {item.location && (
+                                <div class="mt-0.5 text-[#9aa5b8]">
+                                    {item.location}
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <h3 class="text-base font-semibold text-[#eceff4]">
+                                {item.role}{" "}
+                                <span class="font-normal text-[#9aa5b8]">
+                                    ·{" "}
+                                    {item.companyUrl ? (
+                                        <a
+                                            href={item.companyUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-[#6cb6ff] underline decoration-[#6cb6ff]/40 underline-offset-3 transition hover:text-[#96cbff] hover:decoration-[#96cbff]"
+                                        >
+                                            {item.company}
+                                        </a>
+                                    ) : (
+                                        item.company
+                                    )}
+                                </span>
+                            </h3>
+                            {item.summary && (
+                                <p class="mt-1.5 text-sm leading-relaxed text-[#d5dce6]">
+                                    {item.summary}
+                                </p>
+                            )}
+                            <ul class="mt-3 space-y-1.5 text-sm leading-relaxed text-[#9aa5b8] list-disc pl-4">
+                                {item.highlights.map((bullet) => (
+                                    <li>{bullet}</li>
+                                ))}
+                            </ul>
+                            {item.stack && item.stack.length > 0 && (
+                                <div class="mt-3.5 flex flex-wrap gap-1.5">
+                                    {item.stack.map((tech) => (
+                                        <span class="rounded border border-[#222938] bg-[#10141b] px-2 py-0.5 font-mono text-[11px] text-[#9aa5b8]">
+                                            {tech}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+    </div>
+</BaseLayout>

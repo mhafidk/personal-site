@@ -1,0 +1,171 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  color-scheme: dark;
+  --bg-canvas: #0a0c10;
+  --bg-surface: #10141b;
+  --bg-elevated: #161b24;
+  --border-subtle: #1e2430;
+  --border-strong: #2d3648;
+  --text-primary: #eceff4;
+  --text-secondary: #9aa5b8;
+  --text-muted: #6e7a8f;
+  --accent-primary: #6cb6ff;
+  --accent-warm: #e6b450;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  overflow-x: clip;
+}
+
+/* Custom Browser Surfaces */
+::selection {
+  background-color: rgba(108, 182, 255, 0.24);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+/* Tabular numerals for dates, latencies, and math metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* KaTeX Dark Theme & Overflow Refinements */
+.katex {
+  font-size: 1.06em;
+  color: #f0f4f8;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1rem 1.25rem;
+  margin: 1.75rem 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+}
+
+/* Prose / Technical Blog Styling */
+.prose-technical {
+  max-width: 68ch;
+  color: #d5dce6;
+  line-height: 1.75;
+}
+
+.prose-technical h2 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin-top: 2.75rem;
+  margin-bottom: 0.85rem;
+  font-size: 1.45rem;
+  line-height: 1.3;
+  scroll-margin-top: 5rem;
+}
+
+.prose-technical h3 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: 2rem;
+  margin-bottom: 0.65rem;
+  font-size: 1.175rem;
+  scroll-margin-top: 5rem;
+}
+
+.prose-technical p {
+  margin-top: 1.15rem;
+  margin-bottom: 1.15rem;
+}
+
+.prose-technical a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(108, 182, 255, 0.4);
+  transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+
+.prose-technical a:hover {
+  color: #96cbff;
+  text-decoration-color: #96cbff;
+}
+
+.prose-technical code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: #e2e8f0;
+  padding: 0.15rem 0.375rem;
+  border-radius: 0.25rem;
+}
+
+.prose-technical blockquote {
+  border-left: 1px solid var(--border-strong);
+  padding-left: 1.25rem;
+  color: var(--text-secondary);
+  font-style: normal;
+  margin: 1.75rem 0;
+}
+
+.prose-technical ul,
+.prose-technical ol {
+  padding-left: 1.4rem;
+  margin: 1.15rem 0;
+}
+
+.prose-technical li {
+  margin: 0.4rem 0;
+}
+
+.prose-technical hr {
+  border-color: var(--border-subtle);
+  margin: 2.5rem 0;
+}
+
+/* Native Dialog Backdrop */
+dialog::backdrop {
+  background: rgba(5, 7, 10, 0.78);
+  backdrop-filter: blur(6px);
+}

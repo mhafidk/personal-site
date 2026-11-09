@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, PROJECTS, EXPERIENCE } from '../data/site';
+---
+
+<BaseLayout
+  title={`Portfolio & Experience · ${SITE.name}`}
+  description="Selected systems engineering projects, open-source software, and work experience."
+>
+  <div
+    role="status"
+    class="mb-8 flex items-start gap-3 rounded-lg border border-[#e6b450]/30 bg-[#e6b450]/10 px-4 py-3.5 text-sm text-[#eceff4]"
+  >
+    <span
+      aria-hidden="true"
+      class="mt-0.5 inline-flex shrink-0 items-center rounded border border-[#e6b450]/40 bg-[#e6b450]/15 px-1.5 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wider text-[#e6b450]"
+    >
+      WIP
+    </span>
+    <p class="text-xs sm:text-sm leading-relaxed text-[#d5dce6]">
+      <span class="font-medium text-[#eceff4]">Work in Progress</span> — This portfolio page is currently being curated with projects and case studies.
+    </p>
+  </div>
+
+  <section class="pb-12 border-b border-[#1a202c]">
+    <h1 class="text-3xl font-semibold tracking-tight text-[#eceff4]">
+      Portfolio &amp; Systems Engineering
+    </h1>
+    <p class="mt-3 max-w-[65ch] text-sm leading-relaxed text-[#9aa5b8] sm:text-base">
+      Selected software engineering projects, backend architectures, and open-source work.
+    </p>
+
+    {
+      PROJECTS.length > 0 ? (
+        <div class="mt-8 divide-y divide-[#1a202c] border-y border-[#1a202c]">
+          {PROJECTS.map((project) => (
+            <article id={project.slug} class="py-7">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <div class="flex items-baseline gap-3">
+                  <h2 class="text-lg font-semibold text-[#eceff4]">
+                    {project.title}
+                  </h2>
+                  <span class="font-mono text-xs text-[#9aa5b8] tabular-nums">
+                    {project.year}
+                  </span>
+                </div>
+                <div class="flex items-center gap-4 font-mono text-xs">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      class="text-[#6cb6ff] transition hover:text-[#96cbff]"
+                    >
+                      Read Technical Note &rarr;
+                    </a>
+                  )}
+                  {project.repoUrl && (
+                    <a
+                      href={project.repoUrl}
+                      class="text-[#9aa5b8] transition hover:text-[#eceff4]"
+                    >
+                      GitHub Repository
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <p class="mt-2.5 max-w-[68ch] text-sm leading-relaxed text-[#d5dce6]">
+                {project.summary}
+              </p>
+              <p class="mt-2 max-w-[68ch] text-xs leading-relaxed text-[#9aa5b8]">
+                <span class="font-medium text-[#eceff4]">Measured Outcome:</span> {project.outcome}
+              </p>
+
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                {project.stack.map((tech) => (
+                  <span class="rounded border border-[#222938] bg-[#10141b] px-2 py-0.5 font-mono text-[11px] text-[#9aa5b8]">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="mt-8 rounded-lg border border-[#1e2430] bg-[#10141b] px-6 py-10 text-center">
+          <p class="font-mono text-xs text-[#9aa5b8]">
+            Project write-ups and case studies coming soon.
+          </p>
+        </div>
+      )
+    }
+  </section>
+
+  <section id="experience" class="pt-12">
+    <h2 class="text-2xl font-semibold tracking-tight text-[#eceff4]">
+      Career History
+    </h2>
+
+    <div class="mt-8 space-y-10">
+      {
+        EXPERIENCE.map((item) => (
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-[11rem_1fr] sm:gap-8">
+            <div class="font-mono text-xs text-[#9aa5b8] tabular-nums sm:pt-1">
+              <div>{item.period}</div>
+              {item.location && <div class="mt-0.5">{item.location}</div>}
+            </div>
+
+            <div>
+              <h3 class="text-base font-semibold text-[#eceff4]">
+                {item.role}{' '}
+                <span class="font-normal text-[#9aa5b8]">
+                  ·{' '}
+                  {item.companyUrl ? (
+                    <a
+                      href={item.companyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-[#6cb6ff] underline decoration-[#6cb6ff]/40 underline-offset-3 transition hover:text-[#96cbff] hover:decoration-[#96cbff]"
+                    >
+                      {item.company}
+                    </a>
+                  ) : (
+                    item.company
+                  )}
+                </span>
+              </h3>
+              {item.summary && (
+                <p class="mt-1.5 text-sm leading-relaxed text-[#d5dce6]">
+                  {item.summary}
+                </p>
+              )}
+              <ul class="mt-3 space-y-1.5 text-sm leading-relaxed text-[#9aa5b8] list-disc pl-4">
+                {item.highlights.map((bullet) => (
+                  <li>{bullet}</li>
+                ))}
+              </ul>
+              {item.stack && item.stack.length > 0 && (
+                <div class="mt-3.5 flex flex-wrap gap-1.5">
+                  {item.stack.map((tech) => (
+                    <span class="rounded border border-[#222938] bg-[#10141b] px-2 py-0.5 font-mono text-[11px] text-[#9aa5b8]">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
