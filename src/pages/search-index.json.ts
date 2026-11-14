@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { EXPERIENCE } from '../data/site';
+import { EXPERIENCE, PROJECTS } from '../data/site';
 
 function stripMarkdown(raw: string): string {
   return raw
@@ -28,6 +28,16 @@ export const GET: APIRoute = async () => {
     body: stripMarkdown(post.body ?? '').slice(0, 1200),
   }));
 
+  const projectItems = PROJECTS.map((proj) => ({
+    type: 'Project',
+    title: proj.title,
+    description: proj.summary,
+    url: `/projects#${proj.slug}`,
+    date: proj.year,
+    tags: proj.stack ?? [],
+    body: `${proj.summary} ${proj.outcome} ${(proj.stack ?? []).join(' ')}`.trim(),
+  }));
+
   const experienceItems = EXPERIENCE.map((exp) => ({
     type: 'Experience',
     title: `${exp.role} · ${exp.company}`,
@@ -39,7 +49,7 @@ export const GET: APIRoute = async () => {
   }));
 
   return new Response(
-    JSON.stringify([...blogItems, ...experienceItems]),
+    JSON.stringify([...blogItems, ...projectItems, ...experienceItems]),
     {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

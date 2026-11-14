@@ -7,21 +7,6 @@ import { SITE, PROJECTS, EXPERIENCE } from '../data/site';
   title={`Portfolio & Experience · ${SITE.name}`}
   description="Selected systems engineering projects, open-source software, and work experience."
 >
-  <div
-    role="status"
-    class="mb-8 flex items-start gap-3 rounded-lg border border-[#e6b450]/30 bg-[#e6b450]/10 px-4 py-3.5 text-sm text-[#eceff4]"
-  >
-    <span
-      aria-hidden="true"
-      class="mt-0.5 inline-flex shrink-0 items-center rounded border border-[#e6b450]/40 bg-[#e6b450]/15 px-1.5 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wider text-[#e6b450]"
-    >
-      WIP
-    </span>
-    <p class="text-xs sm:text-sm leading-relaxed text-[#d5dce6]">
-      <span class="font-medium text-[#eceff4]">Work in Progress</span> — This portfolio page is currently being curated with projects and case studies.
-    </p>
-  </div>
-
   <section class="pb-12 border-b border-[#1a202c]">
     <h1 class="text-3xl font-semibold tracking-tight text-[#eceff4]">
       Portfolio &amp; Systems Engineering
@@ -48,14 +33,18 @@ import { SITE, PROJECTS, EXPERIENCE } from '../data/site';
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       class="text-[#6cb6ff] transition hover:text-[#96cbff]"
                     >
-                      Read Technical Note &rarr;
+                      {project.liveLabel || 'Live Site'} &rarr;
                     </a>
                   )}
                   {project.repoUrl && (
                     <a
                       href={project.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       class="text-[#9aa5b8] transition hover:text-[#eceff4]"
                     >
                       GitHub Repository

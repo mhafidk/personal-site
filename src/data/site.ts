@@ -18,6 +18,7 @@ export interface ProjectItem {
   stack: string[];
   repoUrl?: string;
   liveUrl?: string;
+  liveLabel?: string;
 }
 
 export const SITE = {
@@ -59,4 +60,43 @@ export const EXPERIENCE: ExperienceItem[] = [
   },
 ];
 
-export const PROJECTS: ProjectItem[] = [];
+export const PROJECTS: ProjectItem[] = [
+  {
+    title: 'Arabisa',
+    slug: 'arabisa',
+    year: '2026',
+    summary:
+      'Offline-first Arabic learning web and mobile application based on the Madinah Arabic Reader curriculum (Durūs al-Lughah al-ʿArabiyyah), featuring structured lessons, a Leitner spaced-repetition flashcard system, randomized quizzes, and a comprehensive vocabulary search dictionary.',
+    outcome:
+      'Engineered a 100% offline-first architecture with zero external network dependencies and local storage persistence. Optimized dual-theme Arabic typography (Warm Paper & Dark Ink) for vowelled harakat legibility, packaged for both Web PWA and Android (Capacitor).',
+    stack: [
+      'SvelteKit',
+      'Svelte 5',
+      'TypeScript',
+      'Tailwind CSS v4',
+      'Capacitor',
+      'PWA',
+    ],
+    repoUrl: 'https://github.com/mhafidk/arabisa',
+  },
+  {
+    title: 'Catatan Kecilku',
+    slug: 'catatan-kecil-ku',
+    year: '2026',
+    summary:
+      'Personal digital publication and archive platform built for collecting, indexing, and sharing daily Islamic prayers, supplications (Doa & Dzikir), and Islamic notes with ambient lighting aesthetics and offline reading capability.',
+    outcome:
+      'Delivered static pre-rendered SSG with sub-second page loads, offline PWA support, ambient theme rendering, and automated sitemap generation hosted on Netlify Edge.',
+    stack: [
+      'SvelteKit',
+      'Svelte 5',
+      'TypeScript',
+      'Tailwind CSS v4',
+      'PWA',
+      'Netlify',
+    ],
+    repoUrl: 'https://github.com/mhafidk/catatan-kecil-ku',
+    liveUrl: 'https://catatankecilku.com',
+    liveLabel: 'Live Site',
+  },
+];
